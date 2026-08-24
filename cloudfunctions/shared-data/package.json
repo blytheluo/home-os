@@ -1,0 +1,9 @@
+{
+  "name": "shared-data",
+  "version": "1.0.0",
+  "description": "共享数据读写云函数（house_items / budget_items / ledger_items）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

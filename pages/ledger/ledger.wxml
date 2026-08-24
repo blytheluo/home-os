@@ -1,0 +1,29 @@
+<navigation-bar title="我的账本" back="{{true}}" color="#3D352F" background="#F7F4EE"></navigation-bar>
+<scroll-view class="ledger-scroll" scroll-y type="list">
+  <view class="ledger-page">
+    <view class="ledger-intro">
+      <text class="eyebrow">PERSONAL LEDGER</text>
+      <view class="month-row"><text class="page-title">{{monthLabel}}</text><picker mode="date" fields="month" value="{{month}}" bindchange="changeMonth"><text class="month-picker">切换月份　⌄</text></picker></view>
+      <text class="page-subtitle">把每一笔日常，轻轻记下来。</text>
+    </view>
+    <view class="ledger-summary">
+      <view class="ledger-summary-main"><text class="summary-label">本月支出</text><text class="summary-amount">¥{{summary.expenseText}}</text></view>
+      <view class="ledger-summary-divider"></view>
+      <view class="ledger-metrics"><view><text>收入</text><text class="income-text">+¥{{summary.incomeText}}</text></view><view><text>结余</text><text class="balance-text">¥{{summary.balanceText}}</text></view><view><text>笔数</text><text>{{summary.count}}</text></view></view>
+    </view>
+    <view class="action-row"><button class="import-button" bindtap="openImport">粘贴备忘录导入</button><text class="action-note">支持 200 条</text><text class="select-button" bindtap="toggleSelectionMode">{{selectionMode ? '取消选择' : '批量删除'}}</text></view>
+    <view class="selection-bar" wx:if="{{selectionMode}}"><text bindtap="toggleSelectAll">{{selectedCount == items.length && items.length ? '取消全选' : '全选'}}</text><text class="selection-count">已选 {{selectedCount}} 笔</text><text class="selection-delete" bindtap="deleteSelected">删除所选</text></view>
+    <view class="list-heading"><text class="section-kicker">MONTHLY NOTES</text><text class="section-title">明细</text></view>
+    <view class="ledger-list" wx:if="{{items.length}}">
+      <view class="ledger-item {{item.selected ? 'ledger-item-selected' : ''}}" wx:for="{{items}}" wx:key="_id" data-id="{{item._id}}" bindtap="handleItemTap">
+        <view class="select-check" wx:if="{{selectionMode}}">{{item.selected ? '✓' : ''}}</view><view class="ledger-date">{{item.displayDate}}</view><view class="ledger-copy"><text class="ledger-title">{{item.title}}<text class="important-mark" wx:if="{{item.important}}">❗</text></text><text class="ledger-note" wx:if="{{item.note}}">{{item.note}}</text></view><view class="ledger-amount {{item.kindClass}}">{{item.amountPrefix}}{{item.amountText}}</view><text class="ledger-delete" wx:if="{{!selectionMode}}" data-id="{{item._id}}" catchtap="removeItem">×</text>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!items.length && !loading}}"><text class="empty-title">这个月还没有记录</text><text class="empty-sub">点击右下角 + 记下第一笔</text></view>
+    <view class="loading" wx:if="{{loading}}">加载中...</view><view class="load-error" wx:if="{{loadError && !loading}}" bindtap="loadItems">{{loadErrorMessage}}，点击重试</view>
+  </view>
+</scroll-view>
+<view class="fab" bindtap="openForm">＋</view>
+<view class="mask" wx:if="{{showForm || showImport}}" bindtap="closeOverlay"></view>
+<view class="form-panel" wx:if="{{showForm}}"><view class="form-header"><text class="form-title">新增记账</text><text class="form-close" bindtap="closeForm">×</text></view><view class="form-body"><view class="form-item"><text class="form-label">日期</text><picker mode="date" value="{{form.date}}" bindchange="onInput" data-field="date"><view class="form-select">{{form.date}}　⌄</view></picker></view><view class="form-item"><text class="form-label">项目 *</text><input class="form-input" value="{{form.title}}" data-field="title" bindinput="onInput" placeholder="例如：山姆、午餐、挂号" /></view><view class="form-row"><view class="form-item half"><text class="form-label">金额 *</text><input class="form-input" type="digit" value="{{form.amount}}" data-field="amount" bindinput="onInput" placeholder="0.00" /></view><view class="form-item half"><text class="form-label">类型</text><picker range="{{kinds}}" bindchange="changeKind"><view class="form-select">{{form.kind}}　⌄</view></picker></view></view><view class="important-switch" bindtap="toggleImportant"><text class="check {{form.important ? 'checked' : ''}}">{{form.important ? '✓' : ''}}</text><text>标记为重点</text></view><view class="form-item"><text class="form-label">备注</text><input class="form-input" value="{{form.note}}" data-field="note" bindinput="onInput" placeholder="可选" /></view></view><view class="form-footer"><button class="form-submit" bindtap="submitForm" loading="{{submitting}}" disabled="{{submitting}}">保存</button></view></view>
+<view class="form-panel import-panel" wx:if="{{showImport}}"><view class="form-header"><text class="form-title">粘贴备忘录</text><text class="form-close" bindtap="closeImport">×</text></view><view class="form-body"><text class="import-help">粘贴类似 8.1　山姆　58.94 的记录，每行一笔。</text><textarea class="import-textarea" maxlength="-1" show-confirm-bar="false" value="{{importText}}" bindinput="onImportInput" placeholder="8.1　山姆　58.94&#10;8.2　午餐　30&#10;8.20　医保报销❗️　+14.58" /></view><view class="form-footer"><button class="form-submit" bindtap="submitImport" loading="{{importing}}" disabled="{{importing}}">解析并导入</button></view></view>

@@ -1,0 +1,307 @@
+page {
+  height: 100vh;
+  background: #f7f4ee;
+}
+
+.home-scroll {
+  height: calc(100vh - 88rpx);
+}
+
+.home-page {
+  padding: 34rpx 32rpx 100rpx;
+  color: #3d352f;
+}
+
+.home-intro {
+  padding: 8rpx 4rpx 34rpx;
+}
+
+.eyebrow,
+.section-kicker {
+  display: block;
+  color: #9b8d82;
+  font-size: 18rpx;
+  letter-spacing: 3rpx;
+}
+
+.home-title {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 44rpx;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.home-title-accent {
+  color: #789681;
+}
+
+.home-subtitle {
+  display: block;
+  margin-top: 12rpx;
+  color: #8f847b;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.overview-card {
+  padding: 30rpx;
+  border-radius: 24rpx;
+  background: #4d6f59;
+  color: #ffffff;
+  box-shadow: 0 16rpx 34rpx rgba(77, 111, 89, 0.2);
+}
+
+.overview-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overview-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.overview-link {
+  padding: 8rpx 16rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.4);
+  border-radius: 20rpx;
+  color: #ffffff;
+  font-size: 20rpx;
+}
+
+.overview-amount {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 52rpx;
+  font-weight: 600;
+}
+
+.overview-divider {
+  height: 1rpx;
+  margin: 24rpx 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.overview-metrics {
+  display: flex;
+}
+
+.overview-metric {
+  flex: 1;
+}
+
+.metric-label,
+.metric-value {
+  display: block;
+}
+
+.metric-label {
+  font-size: 20rpx;
+  opacity: 0.7;
+}
+
+.metric-value {
+  margin-top: 6rpx;
+  font-size: 25rpx;
+}
+
+.metric-value-accent {
+  color: #f5d4a9;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 40rpx 4rpx 18rpx;
+}
+
+.section-title {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.progress-count,
+.section-link {
+  color: #9b8d82;
+  font-size: 22rpx;
+}
+
+.project-card {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: #ffffff;
+  box-shadow: 0 6rpx 18rpx rgba(61, 53, 47, 0.06);
+}
+
+.project-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76rpx;
+  height: 76rpx;
+  margin-right: 20rpx;
+  border-radius: 20rpx;
+  background: #ead9c7;
+  color: #795d48;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.project-main {
+  flex: 1;
+}
+
+.project-title {
+  display: block;
+  font-size: 29rpx;
+  font-weight: 600;
+}
+
+.project-description {
+  display: block;
+  margin-top: 6rpx;
+  color: #9b9189;
+  font-size: 21rpx;
+}
+
+.project-progress-track {
+  height: 8rpx;
+  margin-top: 16rpx;
+  overflow: hidden;
+  border-radius: 4rpx;
+  background: #eee9e2;
+}
+
+.project-progress-bar {
+  height: 100%;
+  border-radius: 4rpx;
+  background: #789681;
+}
+
+.project-arrow,
+.recent-arrow {
+  color: #b6a99e;
+  font-size: 42rpx;
+  line-height: 1;
+}
+
+.recent-heading {
+  margin-top: 42rpx;
+}
+
+.recent-list {
+  overflow: hidden;
+  border-radius: 20rpx;
+  background: #ffffff;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 24rpx;
+  border-bottom: 1rpx solid #f0ebe5;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-dot {
+  width: 14rpx;
+  height: 14rpx;
+  margin-right: 18rpx;
+  border-radius: 50%;
+  background: #d8b27d;
+}
+
+.recent-dot.doing {
+  background: #789681;
+}
+
+.recent-dot.done,
+.recent-dot.confirmed {
+  background: #4d6f59;
+}
+
+.recent-copy {
+  flex: 1;
+}
+
+.recent-title,
+.recent-category {
+  display: block;
+}
+
+.recent-title {
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.recent-category {
+  margin-top: 5rpx;
+  color: #a0968e;
+  font-size: 20rpx;
+}
+
+.future-grid {
+  display: flex;
+  gap: 16rpx;
+}
+
+.future-card {
+  display: block;
+  flex: 1;
+  min-height: 150rpx;
+  padding: 22rpx;
+  border-radius: 20rpx;
+}
+
+.future-card-warm {
+  background: #ead9c7;
+}
+
+.future-card-green {
+  background: #dce8df;
+}
+
+.future-symbol,
+.future-title,
+.future-note {
+  display: block;
+}
+
+.future-symbol {
+  color: #795d48;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.future-title {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.future-note {
+  margin-top: 6rpx;
+  color: #8c7c70;
+  font-size: 19rpx;
+  line-height: 1.4;
+}
+
+.home-error {
+  margin-top: 28rpx;
+  padding: 18rpx;
+  border-radius: 14rpx;
+  background: #f6e7d7;
+  color: #9b623c;
+  font-size: 22rpx;
+  text-align: center;
+}

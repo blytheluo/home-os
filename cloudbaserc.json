@@ -1,0 +1,13 @@
+{
+  "envId": "cloud1-d6gtjn9w42b66483f",
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "shared-data",
+      "timeout": 10,
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "installDependency": true
+    }
+  ]
+}

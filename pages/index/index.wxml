@@ -1,0 +1,213 @@
+<!--index.wxml-->
+<navigation-bar title="装修清单" back="{{false}}" color="#3D352F" background="#F7F4EE"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="page">
+
+    <!-- 预算看板 -->
+    <view class="summary-card">
+      <view class="summary-main">
+        <text class="summary-label">总预算</text>
+        <text class="summary-amount">¥{{budgetSummary.totalBudgetText}}</text>
+        <view class="over-budget" wx:if="{{budgetSummary.overBudget}}">已超支 ¥{{budgetSummary.overAmountText}}</view>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-sub">
+        <view class="summary-item">
+          <text class="summary-item-label">已花费</text>
+          <text class="summary-item-value spent">¥{{budgetSummary.totalActualText}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-item-label">剩余</text>
+          <text class="summary-item-value {{budgetSummary.remaining < 0 ? 'danger' : 'ok'}}">¥{{budgetSummary.remainingText}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-item-label">预算项</text>
+          <text class="summary-item-value">{{budgetSummary.count}}</text>
+        </view>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-progress">
+        <text class="summary-progress-label">装修事项完成</text>
+        <view class="progress-track">
+          <view class="progress-bar" style="{{budgetSummary.progressStyle}}"></view>
+        </view>
+        <text class="summary-progress-num">{{budgetSummary.houseDone}}/{{budgetSummary.houseTotal}}</text>
+      </view>
+      <view class="summary-cat-budget" wx:if="{{budgetSummary.categoryBudgetSummary}}">
+        <text>分类预算：{{budgetSummary.categoryBudgetSummary}}</text>
+      </view>
+    </view>
+
+    <!-- Tab 切换 -->
+    <view class="tabs">
+      <view class="tab {{activeTab === 'house' ? 'tab-active' : ''}}" data-tab="house" bindtap="switchTab">装修事项</view>
+      <view class="tab {{activeTab === 'budget' ? 'tab-active' : ''}}" data-tab="budget" bindtap="switchTab">预算明细</view>
+    </view>
+
+    <view class="hint-bar">点卡片可编辑 · 点右侧状态标签可快速切换状态</view>
+
+    <view class="load-error" wx:if="{{loadError && !loading}}" bindtap="loadAll">
+      <text>部分数据加载失败，点此重试</text>
+    </view>
+
+    <!-- 装修事项列表 -->
+    <block wx:if="{{activeTab === 'house'}}">
+      <view class="category-filter">
+        <text
+          wx:for="{{houseFilterCategories}}"
+          wx:key="*this"
+          class="category-chip {{activeHouseCategory === item ? 'category-chip-active' : ''}}"
+          data-category="{{item}}"
+          bindtap="switchHouseCategory"
+        >{{item}}</text>
+      </view>
+      <view class="empty" wx:if="{{!filteredHouseItems.length && !loading}}">
+        <text class="empty-title">还没有装修事项</text>
+        <text class="empty-sub">当前分类暂无事项</text>
+      </view>
+      <view class="item-card" wx:for="{{filteredHouseItems}}" wx:key="_id" data-id="{{item._id}}" data-type="house" bindtap="editItem">
+        <view class="item-header">
+          <view class="item-tags">
+            <text class="tag tag-category">{{item.category}}</text>
+            <text class="tag tag-type">{{item.type}}</text>
+          </view>
+          <text class="item-status status-{{item.statusClass}}" data-id="{{item._id}}" data-type="house" catchtap="toggleStatus">{{item.status}}</text>
+        </view>
+        <view class="item-title">{{item.title}}</view>
+        <view class="item-content" wx:if="{{item.content}}">{{item.content}}</view>
+        <view class="item-footer">
+          <text class="item-owner" wx:if="{{item.owner}}">负责人：{{item.owner}}</text>
+          <text class="item-delete" data-id="{{item._id}}" data-type="house" catchtap="removeItem">删除</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 预算明细列表 -->
+    <block wx:else>
+      <!-- 分类预算占用汇总 -->
+      <view class="cat-stats" wx:if="{{budgetSummary.categoryStats.length}}">
+        <view class="cat-stat" wx:for="{{budgetSummary.categoryStats}}" wx:key="category">
+          <view class="cat-stat-head">
+            <text class="cat-name">{{item.category}}</text>
+            <text class="cat-limit">上限 ¥{{item.budgetText}}</text>
+          </view>
+          <view class="cat-stat-body">
+            <text class="cat-cell">已规划 ¥{{item.plannedText}}</text>
+            <text class="cat-cell">已花费 ¥{{item.actualText}}</text>
+            <text class="cat-cell {{item.actualRemainingClass}}">剩余可用 ¥{{item.actualRemainingText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty" wx:if="{{!budgetItems.length && !loading}}">
+        <text class="empty-title">还没有具体预算明细</text>
+        <text class="empty-sub">点击右下角 + 添加采购项目</text>
+      </view>
+      <view class="item-card" wx:for="{{budgetItems}}" wx:key="_id" data-id="{{item._id}}" data-type="budget" bindtap="editItem">
+        <view class="item-header">
+          <view class="item-tags">
+            <text class="tag tag-category">{{item.category}}</text>
+          </view>
+          <text class="item-status status-{{item.statusClass}}" data-id="{{item._id}}" data-type="budget" catchtap="toggleStatus">{{item.status}}</text>
+        </view>
+        <view class="item-title">{{item.title}}</view>
+        <view class="budget-row">
+          <text class="budget-label">预算</text>
+          <text class="budget-amount">¥{{item.budgetAmountText}}</text>
+          <block wx:if="{{item.status === '已购买'}}">
+            <text class="budget-label actual">实际</text>
+            <text class="budget-amount actual">¥{{item.actualAmountText}}</text>
+          </block>
+        </view>
+        <view class="item-footer">
+          <text class="item-owner" wx:if="{{item.vendor}}">商家：{{item.vendor}}</text>
+          <text class="item-delete" data-id="{{item._id}}" data-type="budget" catchtap="removeItem">删除</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+  </view>
+</scroll-view>
+
+<!-- 新增按钮 -->
+<view class="fab" bindtap="openForm">＋</view>
+
+<!-- 遮罩 -->
+<view class="mask" wx:if="{{showForm}}" bindtap="closeForm"></view>
+
+<!-- 表单弹窗 -->
+<view class="form-panel" wx:if="{{showForm}}">
+  <view class="form-header">
+    <text class="form-title">{{formMode === 'edit' ? '编辑' : '新增'}}{{activeTab === 'house' ? '装修事项' : '预算项'}}</text>
+    <text class="form-close" bindtap="closeForm">×</text>
+  </view>
+
+  <view class="form-body">
+    <view class="form-item">
+      <text class="form-label">标题 *</text>
+      <input class="form-input" value="{{form.title}}" data-field="title" bindinput="onInput" placeholder="例如：厨房洗碗机布局" placeholder-class="form-placeholder" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">分类</text>
+      <picker class="form-picker" range="{{activeTab === 'house' ? houseCategories : budgetCategories}}" data-field="category" bindchange="onPickerChange">
+        <view class="form-select">{{form.category}} ▾</view>
+      </picker>
+    </view>
+
+    <block wx:if="{{activeTab === 'house'}}">
+      <view class="form-item">
+        <text class="form-label">类型</text>
+        <picker class="form-picker" range="{{houseTypes}}" data-field="type" bindchange="onPickerChange">
+          <view class="form-select">{{form.type}} ▾</view>
+        </picker>
+      </view>
+      <view class="form-item">
+        <text class="form-label">内容</text>
+        <textarea class="form-textarea" value="{{form.content}}" data-field="content" bindinput="onInput" placeholder="备注、待确认点等" placeholder-class="form-placeholder" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">负责人</text>
+        <input class="form-input" value="{{form.owner}}" data-field="owner" bindinput="onInput" placeholder="谁负责" placeholder-class="form-placeholder" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">状态</text>
+        <picker class="form-picker" range="{{houseStatuses}}" data-field="status" bindchange="onPickerChange">
+          <view class="form-select">{{form.status || '待确认'}} ▾</view>
+        </picker>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="form-item">
+        <text class="form-label">状态</text>
+        <picker class="form-picker" range="{{budgetStatuses}}" data-field="status" bindchange="onPickerChange">
+          <view class="form-select">{{form.status || '待购买'}} ▾</view>
+        </picker>
+      </view>
+      <view class="form-row">
+        <view class="form-item {{form.status === '已购买' ? 'half' : ''}}">
+          <text class="form-label">预算金额</text>
+          <input class="form-input" type="digit" value="{{form.budgetAmount}}" data-field="budgetAmount" bindinput="onInput" placeholder="0.00" placeholder-class="form-placeholder" />
+        </view>
+        <view class="form-item half" wx:if="{{form.status === '已购买'}}">
+          <text class="form-label">实际花费</text>
+          <input class="form-input" type="digit" value="{{form.actualAmount}}" data-field="actualAmount" bindinput="onInput" placeholder="0.00" placeholder-class="form-placeholder" />
+        </view>
+      </view>
+      <view class="form-item">
+        <text class="form-label">商家</text>
+        <input class="form-input" value="{{form.vendor}}" data-field="vendor" bindinput="onInput" placeholder="例如：方太专卖店" placeholder-class="form-placeholder" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">备注</text>
+        <input class="form-input" value="{{form.note}}" data-field="note" bindinput="onInput" placeholder="其他说明" placeholder-class="form-placeholder" />
+      </view>
+    </block>
+  </view>
+
+  <view class="form-footer">
+    <button class="form-submit {{submitting ? 'form-submit-disabled' : ''}}" bindtap="submitForm" loading="{{submitting}}" disabled="{{submitting}}">保存</button>
+  </view>
+</view>

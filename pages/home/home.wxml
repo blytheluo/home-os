@@ -1,0 +1,96 @@
+<navigation-bar title="熊山备忘录" back="{{false}}" color="#3D352F" background="#F7F4EE"></navigation-bar>
+
+<scroll-view class="home-scroll" scroll-y type="list">
+  <view class="home-page">
+    <view class="home-intro">
+      <text class="eyebrow">FAMILY NOTEBOOK</text>
+      <text class="home-title">把家的事情，<text class="home-title-accent">慢慢记好。</text></text>
+      <text class="home-subtitle">装修、预算和未来的家庭日常，都放在这里。</text>
+    </view>
+
+    <view class="overview-card">
+      <view class="overview-topline">
+        <text class="overview-label">装修预算</text>
+        <navigator class="overview-link" url="/pages/index/index">查看装修</navigator>
+      </view>
+      <text class="overview-amount">¥{{totalBudgetText}}</text>
+      <view class="overview-divider"></view>
+      <view class="overview-metrics">
+        <view class="overview-metric">
+          <text class="metric-label">已花费</text>
+          <text class="metric-value">¥{{totalActualText}}</text>
+        </view>
+        <view class="overview-metric">
+          <text class="metric-label">剩余</text>
+          <text class="metric-value metric-value-accent">¥{{remainingText}}</text>
+        </view>
+        <view class="overview-metric">
+          <text class="metric-label">待确认</text>
+          <text class="metric-value">{{pendingCount}} 项</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-heading">
+      <view>
+        <text class="section-kicker">CURRENT PROJECT</text>
+        <text class="section-title">正在进行</text>
+      </view>
+      <text class="progress-count">{{houseDone}} / {{houseTotal}}</text>
+    </view>
+
+    <navigator class="project-card" url="/pages/index/index">
+      <view class="project-mark">家</view>
+      <view class="project-main">
+        <text class="project-title">4-201 装修</text>
+        <text class="project-description">装修事项、采购预算与家庭决策</text>
+        <view class="project-progress-track">
+          <view class="project-progress-bar" style="width: {{houseTotal ? houseDone / houseTotal * 100 : 0}}%;"></view>
+        </view>
+      </view>
+      <text class="project-arrow">›</text>
+    </navigator>
+
+    <view class="section-heading recent-heading">
+      <view>
+        <text class="section-kicker">RECENT NOTES</text>
+        <text class="section-title">最近事项</text>
+      </view>
+      <navigator class="section-link" url="/pages/index/index">全部</navigator>
+    </view>
+
+    <view class="recent-list" wx:if="{{recentItems.length}}">
+      <navigator class="recent-item" wx:for="{{recentItems}}" wx:key="_id" url="/pages/index/index">
+        <view class="recent-dot status-{{item.statusClass}}"></view>
+        <view class="recent-copy">
+          <text class="recent-title">{{item.title}}</text>
+          <text class="recent-category">{{item.category}} · {{item.status}}</text>
+        </view>
+        <text class="recent-arrow">›</text>
+      </navigator>
+    </view>
+
+    <view class="future-section">
+      <view class="section-heading">
+        <view>
+          <text class="section-kicker">COMING NEXT</text>
+          <text class="section-title">以后还可以记录</text>
+        </view>
+      </view>
+      <view class="future-grid">
+        <navigator class="future-card future-card-warm" url="/pages/ledger/ledger">
+          <text class="future-symbol">¥</text>
+          <text class="future-title">记账管理</text>
+          <text class="future-note">家庭收支与月度回顾</text>
+        </navigator>
+        <view class="future-card future-card-green">
+          <text class="future-symbol">记</text>
+          <text class="future-title">家庭备忘录</text>
+          <text class="future-note">重要事情随手记录</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="home-error" wx:if="{{loadError}}" bindtap="loadOverview">概览加载失败，点击重试</view>
+  </view>
+</scroll-view>
