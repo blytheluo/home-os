@@ -16,7 +16,7 @@ const ALLOWED_COLLECTIONS = ["house_items", "budget_items", "ledger_items", "pro
 const READONLY_COLLECTIONS = ["project_settings"];
 
 // 允许的操作（只保留稳定的增删改查，移除临时种子/清理操作）
-const ALLOWED_ACTIONS = ["list", "add", "bulkAdd", "bulkRemove", "update", "remove"];
+const ALLOWED_ACTIONS = ["list", "add", "bulkAdd", "bulkRemove", "syncRenovation", "update", "remove"];
 
 // 各集合允许写入的字段白名单
 const ALLOWED_FIELDS = {
@@ -26,7 +26,7 @@ const ALLOWED_FIELDS = {
 };
 
 // 允许的枚举值
-const HOUSE_CATEGORIES = ["厨房", "西厨", "客厅", "卫生间", "卧室", "书房", "阳台", "其他"];
+const HOUSE_CATEGORIES = ["厨房", "西厨", "客厅", "卧室", "书房", "阳台", "其他"];
 const HOUSE_TYPES = ["事项", "决策", "待办"];
 const HOUSE_STATUSES = ["待确认", "进行中", "已完成", "已确定", "已放弃"];
 const BUDGET_STATUSES = ["待购买", "已购买"];
@@ -66,6 +66,8 @@ exports.main = async (event, context) => {
         return await bulkAddItems(event);
       case "bulkRemove":
         return await bulkRemoveItems(event);
+      case "syncRenovation":
+        return await syncRenovationItems(event);
       case "update":
         return await updateItem(event);
       case "remove":
@@ -238,6 +240,42 @@ async function bulkRemoveItems(event) {
   const uniqueIds = [...new Set(ids)];
   await Promise.all(uniqueIds.map((id) => db.collection(collection).doc(id).remove()));
   return { code: 0, deleted: uniqueIds.length };
+}
+
+// 同步装修文档的新版本：按 sourceKey 更新内容，不覆盖用户已经修改的状态。
+// 仅供当前项目的装修事项使用，避免重复导入产生副本。
+async function syncRenovationItems(event) {
+  const { collection, dataList } = event;
+  if (collection !== "house_items") {
+    return { code: -1, message: "syncRenovation 仅支持 house_items 集合" };
+  }
+  if (!Array.isArray(dataList) || !dataList.length || dataList.length > 50) {
+    return { code: -1, message: "装修事项同步数量不正确" };
+  }
+
+  let inserted = 0;
+  let updated = 0;
+  for (const data of dataList) {
+    const cleaned = sanitizeData(collection, data);
+    if (!cleaned.ok || !cleaned.data.sourceKey) {
+      return { code: -1, message: cleaned.ok ? "装修事项缺少 sourceKey" : cleaned.message };
+    }
+    const existing = await db.collection(collection).where({ sourceKey: cleaned.data.sourceKey }).limit(1).get();
+    const nextData = { ...cleaned.data };
+    delete nextData.status;
+    if (existing.data && existing.data.length) {
+      await db.collection(collection).doc(existing.data[0]._id).update({
+        data: { ...nextData, updatedAt: db.serverDate() },
+      });
+      updated += 1;
+    } else {
+      await db.collection(collection).add({
+        data: { ...cleaned.data, status: data.status || "待确认", createdAt: db.serverDate(), updatedAt: db.serverDate() },
+      });
+      inserted += 1;
+    }
+  }
+  return { code: 0, inserted, updated };
 }
 
 // 更新
