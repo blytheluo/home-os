@@ -1,4 +1,21 @@
 // index.js
+const RENOVATION_CONTEXT_VERSION = "V1.4";
+const RENOVATION_ITEMS_V14 = [
+  { sourceKey: "md:厨房-洗碗机布局", title: "厨房洗碗机布局", category: "厨房", type: "事项", content: "方太 JBCD6E-04-G6 17套洗碗机，优先布局为灶具上方、洗碗机位于灶具下方，中间增加隔板；上方薄抽屉是否保留，需确认散热、承重和水电条件。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 1 },
+  { sourceKey: "md:厨房-冰箱与功能型电器柜", title: "厨房冰箱与功能型电器柜", category: "厨房", type: "事项", content: "左侧适配海信606L白色十字门冰箱与功能型电器柜，电器柜放置微波炉、空气炸锅及日常功能电器；与客餐厅西厨设备分工，不重复。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 2 },
+  { sourceKey: "md:厨房-水槽区备菜台面", title: "水槽区连续备菜台面", category: "厨房", type: "事项", content: "右侧水槽区尽量保留连续、较长的备菜台面；移除台式洗碗机后，规划 MUJI 双层沥水架、刀具收纳和砧板位置，优先使用抽屉。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 3 },
+  { sourceKey: "md:厨房-台面与保留项评估", title: "厨房柜体与台面方案", category: "厨房", type: "决策", content: "最终方向为 METOD 米多柜体 + VÅRSTA 沃托普柜门 + 白色有纹理人造石台面 + 不锈钢把手，厨房预算约2万元。保留精装燃气灶、油烟机、水槽、厨下净水器和状态良好的固定吊柜，现场复尺后确认。垃圾处理器暂不安装，仅预留条件。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 4 },
+  { sourceKey: "md:西厨-收纳", title: "西厨收纳与设备分工", category: "西厨", type: "事项", content: "西厨负责咖啡、烘焙和生活展示，放置咖啡机、烤箱、厨师机、养生壶等设备；不与厨房功能型电器柜重复。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 5 },
+  { sourceKey: "md:客厅-沙发餐桌", title: "客厅与餐厅家具", category: "客厅", type: "决策", content: "客厅配置海信 E5Q Ultra 75寸 Mini LED电视、BESTÅ电视柜和 STOCKHOLM 藤编柜，电视墙挂且暂不配回音壁。餐厅使用源氏木语黑胡桃榫卯餐桌1600×800mm、两把木椅和1400mm长凳，保持留白。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 6 },
+  { sourceKey: "md:主卧-床与床垫", title: "主卧床、床垫与收纳", category: "卧室", type: "事项", content: "库嘉顿米白色箱体床180×200cm，床尾留白；衣柜集中侧墙，床垫备选 IKEA VATNESTRÖM 180×200cm，偏好支撑性更强、偏硬的睡感，需与床体匹配确认。床尾配置 STRANDMON 红褐色脚凳。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 7 },
+  { sourceKey: "md:次卧-衣柜", title: "次卧箱体床与衣柜", category: "卧室", type: "事项", content: "配置1.5m箱体床，父母偶尔居住并兼顾未来儿童房；增加宜达奈121×211cm风琴门衣柜和诺德里四斗抽屉柜，预留床体、开门及通行空间。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 8 },
+  { sourceKey: "md:书房-收纳与布局", title: "书房桌、床与收纳", category: "书房", type: "事项", content: "配置 MITTZON 米特丛橡木电动升降桌120×60cm、BILLY 毕利约40cm开放书柜和 SLÄKT 90×200cm单人床；床下及墙面预留行李箱、露营装备和露营推车位置。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 9 },
+  { sourceKey: "md:阳台-家务区", title: "阳台家政区", category: "阳台", type: "事项", content: "阳台以家政+休闲为主，洗烘叠放、水槽柜，保持空间通透；现场确认上下水、电源、检修和设备尺寸。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 10 },
+  { sourceKey: "md:全屋-窗帘方向", title: "全屋窗帘与软装配色", category: "其他", type: "决策", content: "全屋采用白纱帘 + 浅色遮光材质，优先保证明亮、柔和、隐私和长期搭配灵活性；不使用绿色窗帘，主卧仅以绿色作为小面积软装点缀。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 11 },
+  { sourceKey: "md:全屋-照明优化", title: "全屋照明方案", category: "其他", type: "事项", content: "客厅简洁圆形吸顶灯，餐厅 IKEA 巴诗通吊灯；主卧 STOCKHOLM吊灯+ÅRSTID壁灯×2；次卧 KRANBALK吸顶灯+单侧KORVSNÖRE壁灯；书房简洁吸顶灯，不选风扇灯。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 12 },
+  { sourceKey: "md:全屋-飘窗护栏", title: "飘窗护栏确认", category: "其他", type: "待办", content: "保留精装基础，飘窗内侧护栏待物业确认后，再评估是否拆除；飘窗石材台面保留。", projectId: "home-os", source: "4-201_Renovation_Context_V1.md V1.4", sort: 13 },
+];
+
 Page({
   data: {
     loading: true,
@@ -48,7 +65,18 @@ Page({
   },
 
   onLoad() {
-    this.loadAll();
+    this.syncLatestRenovation().finally(() => this.loadAll());
+  },
+
+  async syncLatestRenovation() {
+    const syncKey = "renovation-context-version";
+    if (wx.getStorageSync(syncKey) === RENOVATION_CONTEXT_VERSION) return;
+    try {
+      await this.callSharedData({ collection: "house_items", action: "syncRenovation", dataList: RENOVATION_ITEMS_V14 });
+      wx.setStorageSync(syncKey, RENOVATION_CONTEXT_VERSION);
+    } catch (err) {
+      console.error("装修文档同步失败", err);
+    }
   },
 
   onPullDownRefresh() {
@@ -330,215 +358,3 @@ Page({
         status: item.status || "",
       },
     });
-  },
-
-  closeForm() {
-    if (this.data.submitting) {
-      return;
-    }
-    this.setData({ showForm: false });
-  },
-
-  onInput(e) {
-    const field = e.currentTarget.dataset.field;
-    this.setData({ [`form.${field}`]: e.detail.value });
-  },
-
-  onPickerChange(e) {
-    const field = e.currentTarget.dataset.field;
-    const idx = Number(e.detail.value);
-    const isHouse = this.data.activeTab === "house";
-    const optionsMap = {
-      category: isHouse ? this.data.houseCategories : this.data.budgetCategories,
-      type: this.data.houseTypes,
-      status: isHouse ? this.data.houseStatuses : this.data.budgetStatuses,
-    };
-    const value = optionsMap[field] ? optionsMap[field][idx] : "";
-    this.setData({ [`form.${field}`]: value });
-  },
-
-  async submitForm() {
-    const { activeTab, form, submitting, formMode, editId } = this.data;
-    if (submitting) {
-      return;
-    }
-    if (!form.title.trim()) {
-      wx.showToast({ title: "请填写标题", icon: "none" });
-      return;
-    }
-    const isHouse = activeTab === "house";
-    const collection = isHouse ? "house_items" : "budget_items";
-    const isEdit = formMode === "edit";
-
-    const payload = {
-      title: form.title.trim(),
-      category: form.category,
-    };
-    if (isHouse) {
-      payload.type = form.type || "事项";
-      payload.content = form.content;
-      payload.owner = form.owner;
-      if (!isEdit) {
-        payload.sort = 0;
-      }
-    } else {
-      // 预算金额：新增必填，编辑留空则保留原值
-      const budgetRaw = (form.budgetAmount || "").trim();
-      if (budgetRaw === "" && !isEdit) {
-        wx.showToast({ title: "请填写预算金额", icon: "none" });
-        return;
-      }
-      if (budgetRaw !== "") {
-        const b = Number(budgetRaw);
-        if (Number.isNaN(b) || b < 0) {
-          wx.showToast({ title: "预算金额格式不正确", icon: "none" });
-          return;
-        }
-        if (!isEdit && b <= 0) {
-          wx.showToast({ title: "请填写预算金额", icon: "none" });
-          return;
-        }
-        payload.budgetAmount = b;
-      }
-      // 实际花费：仅「已购买」状态下有意义；编辑留空则保留原值
-      const finalStatus = form.status || "待购买";
-      if (finalStatus === "已购买") {
-        const actualRaw = (form.actualAmount || "").trim();
-        if (actualRaw !== "") {
-          const a = Number(actualRaw);
-          if (Number.isNaN(a) || a < 0) {
-            wx.showToast({ title: "实际花费格式不正确", icon: "none" });
-            return;
-          }
-          payload.actualAmount = a;
-        }
-      } else {
-        payload.actualAmount = 0;
-      }
-      payload.vendor = form.vendor;
-      payload.note = form.note;
-    }
-    if (!isEdit) {
-      payload.projectId = "home-os";
-    }
-    payload.status = form.status || (isHouse ? "待确认" : "待购买");
-
-    this.setData({ submitting: true });
-    try {
-      if (isEdit) {
-        await this.callSharedData({ collection, action: "update", id: editId, data: payload });
-      } else {
-        await this.callSharedData({ collection, action: "add", data: payload });
-      }
-      this.setData({ showForm: false, submitting: false });
-      wx.showToast({ title: isEdit ? "已保存" : "已添加", icon: "success" });
-      this.refreshData();
-    } catch (err) {
-      console.error("保存失败", err);
-      this.setData({ submitting: false });
-      wx.showToast({ title: err.message || "保存失败", icon: "none" });
-    }
-  },
-
-  // ---- 删除 ----
-  removeItem(e) {
-    const { id, type } = e.currentTarget.dataset;
-    const collection = type === "house" ? "house_items" : "budget_items";
-    const items = type === "house" ? this.data.houseItems : this.data.budgetItems;
-    const item = items.find((i) => i._id === id);
-    const itemTitle = item ? item.title : "";
-    wx.showModal({
-      title: "确认删除",
-      content: `确定删除「${itemTitle}」吗？删除后不可恢复。`,
-      confirmColor: "#fa5151",
-      success: (res) => {
-        if (!res.confirm) {
-          return;
-        }
-        this.callSharedData({ collection, action: "remove", id })
-          .then(() => {
-            wx.showToast({ title: "已删除", icon: "success" });
-          })
-          .catch((err) => {
-            console.error("删除失败", err);
-            wx.showToast({ title: err.message || "删除失败", icon: "none" });
-          })
-          .then(() => this.refreshData());
-      },
-    });
-  },
-
-  // ---- 状态切换（点击状态标签） ----
-  toggleStatus(e) {
-    const { id, type } = e.currentTarget.dataset;
-    const isHouse = type === "house";
-    const collection = isHouse ? "house_items" : "budget_items";
-    const items = isHouse ? this.data.houseItems : this.data.budgetItems;
-    const item = items.find((i) => i._id === id);
-    if (!item) {
-      return;
-    }
-    const statuses = isHouse ? this.data.houseStatuses : this.data.budgetStatuses;
-    const idx = statuses.indexOf(item.status);
-    const nextStatus = idx >= 0 ? statuses[(idx + 1) % statuses.length] : statuses[0];
-
-    // 预算项：待购买 -> 已购买 时登记实际花费
-    if (!isHouse && item.status === "待购买" && nextStatus === "已购买") {
-      this.promptActualAmount(item);
-      return;
-    }
-    // 预算项：已购买 -> 待购买 时清空实际花费
-    const updateData = { status: nextStatus };
-    if (!isHouse && item.status === "已购买") {
-      updateData.actualAmount = 0;
-    }
-
-    this.callSharedData({ collection, action: "update", id, data: updateData })
-      .then(() => {
-        wx.showToast({ title: `已切换为「${nextStatus}」`, icon: "none" });
-      })
-      .catch((err) => {
-        console.error("更新状态失败", err);
-        wx.showToast({ title: err.message || "更新失败", icon: "none" });
-      })
-      .then(() => this.refreshData());
-  },
-
-  // 预算项购买时登记实际花费
-  promptActualAmount(item) {
-    const defaultText = item.budgetAmount ? String(item.budgetAmount) : "";
-    wx.showModal({
-      title: "登记实际花费",
-      editable: true,
-      placeholderText: defaultText ? `预算 ¥${item.budgetAmount}` : "输入实际花费金额",
-      success: (res) => {
-        if (!res.confirm) {
-          return;
-        }
-        const input = (res.content || "").trim();
-        let amount = item.actualAmount || 0;
-        if (input !== "") {
-          amount = Number(input);
-          if (Number.isNaN(amount) || amount < 0) {
-            wx.showToast({ title: "金额格式不正确", icon: "none" });
-            return;
-          }
-        }
-        this.callSharedData({
-          collection: "budget_items",
-          action: "update",
-          id: item._id,
-          data: { status: "已购买", actualAmount: amount },
-        })
-          .then(() => {
-            wx.showToast({ title: "已登记", icon: "success" });
-          })
-          .catch((err) => {
-            console.error("登记实际花费失败", err);
-            wx.showToast({ title: err.message || "登记失败", icon: "none" });
-          })
-          .then(() => this.refreshData());
-      },
-    });
-  },
-});
