@@ -123,6 +123,11 @@ Page({
     Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
   },
 
+  monthNameMap: {
+    January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
+    July: 7, August: 8, September: 9, October: 10, November: 11, December: 12,
+  },
+
   // 识别形如 "B2026-Aug" 的月份标题，返回 "2026-08"；无法识别返回 null
   parseMonthHeader(line) {
     const value = line.trim();
@@ -130,11 +135,12 @@ Page({
     if (numeric) {
       return `${numeric[1]}-${String(Number(numeric[2])).padStart(2, "0")}`;
     }
-    const named = value.match(/^[A-Za-z]?(\d{4})[-\s]?([A-Za-z]{3,9})$/);
+    const named = value.match(/^[A-Za-z]?(\d{4})[-\s]?([A-Za-z]{3,9})$/i);
     if (!named) return null;
     const year = named[1];
-    const key = named[2].slice(0, 3);
-    const monthNumber = this.monthAbbrMap[key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()];
+    const normalized = named[2].charAt(0).toUpperCase() + named[2].slice(1).toLowerCase();
+    const shortName = normalized.slice(0, 3);
+    const monthNumber = this.monthNameMap[normalized] || this.monthAbbrMap[shortName];
     if (!monthNumber) return null;
     return `${year}-${String(monthNumber).padStart(2, "0")}`;
   },
@@ -160,12 +166,11 @@ Page({
       const line = rawLine.trim();
       if (!line) continue; // 跳过空行
 
-      // 1) 月份标题行，如 "B2026-Aug"
-      if (/^[A-Za-z]?\d{4}[-\s]?[A-Za-z]{3}$/.test(line)) {
-        const headerMonth = this.parseMonthHeader(line);
-        if (headerMonth) {
-          currentMonth = headerMonth;
-        }
+      // 1) 月份标题行，如 "B2026-Aug"、"B2026-July"、"2026年7月"
+      // 直接调用解析器，不再用只允许三位缩写的外层正则拦截。
+      const headerMonth = this.parseMonthHeader(line);
+      if (headerMonth) {
+        currentMonth = headerMonth;
         continue; // 标题行不当作账单记录
       }
 
