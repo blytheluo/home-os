@@ -2,7 +2,8 @@
   "pages": [
     "pages/home/home",
     "pages/index/index",
-    "pages/ledger/ledger"
+    "pages/ledger/ledger",
+    "pages/handover/handover"
   ],
   "window": {
     "navigationBarTextStyle": "black",
