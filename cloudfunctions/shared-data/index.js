@@ -10,19 +10,20 @@ cloud.init({
 const db = cloud.database();
 
 // 允许操作的集合白名单
-const ALLOWED_COLLECTIONS = ["house_items", "budget_items", "ledger_items", "project_settings"];
+const ALLOWED_COLLECTIONS = ["house_items", "budget_items", "ledger_items", "handover_items", "project_settings"];
 
 // 只读集合（不允许前端增删改）
 const READONLY_COLLECTIONS = ["project_settings"];
 
 // 允许的操作（只保留稳定的增删改查，移除临时种子/清理操作）
-const ALLOWED_ACTIONS = ["list", "add", "bulkAdd", "bulkRemove", "syncRenovation", "update", "remove"];
+const ALLOWED_ACTIONS = ["list", "add", "bulkAdd", "bulkRemove", "syncRenovation", "syncHandover", "update", "remove"];
 
 // 各集合允许写入的字段白名单
 const ALLOWED_FIELDS = {
   house_items: ["title", "category", "type", "status", "content", "owner", "sort", "projectId", "sourceKey", "source"],
   budget_items: ["title", "category", "budgetAmount", "actualAmount", "status", "vendor", "note", "projectId", "sourceKey", "source"],
   ledger_items: ["date", "month", "title", "amount", "kind", "important", "note", "projectId", "sourceKey", "source"],
+  handover_items: ["phase", "timeline", "title", "content", "status", "sort", "projectId", "sourceKey", "source"],
 };
 
 // 允许的枚举值
@@ -31,6 +32,7 @@ const HOUSE_TYPES = ["事项", "决策", "待办"];
 const HOUSE_STATUSES = ["待确认", "进行中", "已完成", "已确定", "已放弃"];
 const BUDGET_STATUSES = ["待购买", "已购买"];
 const LEDGER_KINDS = ["支出", "收入"];
+const HANDOVER_STATUSES = ["未开始", "进行中", "已完成"];
 
 // 禁止客户端写入的字段
 const FORBIDDEN_FIELDS = ["_id", "_openid", "createdAt", "updatedAt"];
@@ -68,6 +70,8 @@ exports.main = async (event, context) => {
         return await bulkRemoveItems(event);
       case "syncRenovation":
         return await syncRenovationItems(event);
+      case "syncHandover":
+        return await syncHandoverItems(event);
       case "update":
         return await updateItem(event);
       case "remove":
@@ -146,6 +150,15 @@ function sanitizeData(collection, data) {
     }
     if (clean.important != null && typeof clean.important !== "boolean") {
       return { ok: false, message: "important 必须是布尔值" };
+    }
+  }
+
+  if (collection === "handover_items") {
+    if (clean.status != null && clean.status !== "" && !HANDOVER_STATUSES.includes(clean.status)) {
+      return { ok: false, message: `不允许的交房清单状态: ${clean.status}` };
+    }
+    if (clean.sort != null && (!Number.isInteger(clean.sort) || clean.sort < 0)) {
+      return { ok: false, message: "sort 必须是非负整数" };
     }
   }
 
@@ -271,6 +284,40 @@ async function syncRenovationItems(event) {
     } else {
       await db.collection(collection).add({
         data: { ...cleaned.data, status: data.status || "待确认", createdAt: db.serverDate(), updatedAt: db.serverDate() },
+      });
+      inserted += 1;
+    }
+  }
+  return { code: 0, inserted, updated };
+}
+
+// 按 sourceKey 初始化/更新交房后30天清单，保留用户已经修改的完成状态。
+async function syncHandoverItems(event) {
+  const { collection, dataList } = event;
+  if (collection !== "handover_items") {
+    return { code: -1, message: "syncHandover 仅支持 handover_items 集合" };
+  }
+  if (!Array.isArray(dataList) || !dataList.length || dataList.length > 100) {
+    return { code: -1, message: "交房清单同步数量不正确" };
+  }
+  let inserted = 0;
+  let updated = 0;
+  for (const data of dataList) {
+    const cleaned = sanitizeData(collection, data);
+    if (!cleaned.ok || !cleaned.data.sourceKey) {
+      return { code: -1, message: cleaned.ok ? "交房清单缺少 sourceKey" : cleaned.message };
+    }
+    const existing = await db.collection(collection).where({ sourceKey: cleaned.data.sourceKey }).limit(1).get();
+    const nextData = { ...cleaned.data };
+    delete nextData.status;
+    if (existing.data && existing.data.length) {
+      await db.collection(collection).doc(existing.data[0]._id).update({
+        data: { ...nextData, updatedAt: db.serverDate() },
+      });
+      updated += 1;
+    } else {
+      await db.collection(collection).add({
+        data: { ...cleaned.data, status: data.status || "未开始", createdAt: db.serverDate(), updatedAt: db.serverDate() },
       });
       inserted += 1;
     }
