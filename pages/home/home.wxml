@@ -51,6 +51,15 @@
       <text class="project-arrow">›</text>
     </navigator>
 
+    <navigator class="handover-card" url="/pages/handover/handover">
+      <view class="handover-mark">30</view>
+      <view class="project-main">
+        <text class="project-title">交房后30天</text>
+        <text class="project-description">按阶段完成验房、施工、安装和入住检查</text>
+      </view>
+      <text class="project-arrow">›</text>
+    </navigator>
+
     <view class="section-heading recent-heading">
       <view>
         <text class="section-kicker">RECENT NOTES</text>
