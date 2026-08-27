@@ -1,0 +1,28 @@
+page { height: 100vh; background: #f7f4ee; }
+.handover-scroll { height: calc(100vh - 88rpx); }
+.handover-page { padding: 34rpx 32rpx 100rpx; color: #3d352f; }
+.handover-intro { padding: 8rpx 4rpx 28rpx; }
+.eyebrow { display: block; color: #9b8d82; font-size: 18rpx; letter-spacing: 3rpx; }
+.page-title { display: block; margin-top: 12rpx; font-size: 44rpx; font-weight: 600; }
+.page-subtitle { display: block; margin-top: 10rpx; color: #8f847b; font-size: 24rpx; line-height: 1.6; }
+.handover-summary { position: relative; padding: 28rpx; border-radius: 24rpx; background: #4d6f59; color: #fff; box-shadow: 0 14rpx 30rpx rgba(77,111,89,.18); }
+.summary-label { display: block; font-size: 22rpx; opacity: .75; }
+.summary-amount { display: block; margin-top: 6rpx; font-size: 48rpx; font-weight: 600; }
+.summary-percent { position: absolute; top: 30rpx; right: 28rpx; color: #f5d4a9; font-size: 28rpx; font-weight: 600; }
+.handover-progress { height: 10rpx; margin-top: 22rpx; overflow: hidden; border-radius: 5rpx; background: rgba(255,255,255,.22); }
+.handover-progress view { height: 100%; border-radius: 5rpx; background: #f5d4a9; }
+.handover-tip { margin: 20rpx 4rpx 28rpx; padding: 18rpx 20rpx; border-left: 5rpx solid #b88a5a; border-radius: 4rpx; background: #eee7dd; color: #806f61; font-size: 21rpx; line-height: 1.55; }
+.phase-block { margin-bottom: 18rpx; overflow: hidden; border-radius: 20rpx; background: #fff; box-shadow: 0 6rpx 18rpx rgba(61,53,47,.05); }
+.phase-header { display: flex; align-items: center; justify-content: space-between; padding: 24rpx 24rpx 20rpx; border-bottom: 1rpx solid #f0ebe5; }
+.phase-title { display: block; font-size: 28rpx; font-weight: 600; }
+.phase-count { display: block; margin-top: 6rpx; color: #9b9189; font-size: 20rpx; }
+.phase-arrow { color: #8aa08c; font-size: 36rpx; }
+.task-item { display: flex; padding: 22rpx 24rpx; border-bottom: 1rpx solid #f2eee9; }
+.task-item:last-child { border-bottom: none; }
+.task-check { flex: none; display: flex; align-items: center; justify-content: center; width: 38rpx; height: 38rpx; margin: 2rpx 18rpx 0 0; border: 2rpx solid #b9aa9b; border-radius: 50%; color: #fff; background: #fff; font-size: 24rpx; }
+.task-done .task-check { border-color: #6f806e; background: #6f806e; }
+.task-main { flex: 1; }
+.task-timeline { display: block; color: #b88a5a; font-size: 19rpx; }
+.task-title { display: block; margin-top: 4rpx; font-size: 26rpx; font-weight: 600; }
+.task-content { display: block; margin-top: 7rpx; color: #8f847b; font-size: 21rpx; line-height: 1.55; }
+.task-done .task-title, .task-done .task-content { color: #aaa19a; text-decoration: line-through; }
