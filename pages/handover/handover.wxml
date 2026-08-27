@@ -1,0 +1,33 @@
+<navigation-bar title="交房后30天" back="{{true}}" color="#3D352F" background="#F7F4EE"></navigation-bar>
+<scroll-view class="handover-scroll" scroll-y type="list">
+  <view class="handover-page">
+    <view class="handover-intro">
+      <text class="eyebrow">HOME RENOVATION / D0 → D30</text>
+      <text class="page-title">交房后30天</text>
+      <text class="page-subtitle">以交房日为 D0，按阶段把事情一件件完成。</text>
+    </view>
+
+    <view class="handover-summary">
+      <view><text class="summary-label">当前进度</text><text class="summary-amount">{{progressText}}</text></view>
+      <text class="summary-percent">{{progressPercent}}%</text>
+      <view class="handover-progress"><view style="{{progressStyle}}"></view></view>
+    </view>
+
+    <view class="handover-tip">先完成前置条件，再推进下一阶段；排水、防返水和施工边界以物业图纸及现场确认结果为准。</view>
+
+    <view class="phase-block" wx:for="{{phases}}" wx:key="name" wx:for-item="phase" wx:for-index="phaseIndex">
+      <view class="phase-header" data-index="{{phaseIndex}}" bindtap="togglePhase">
+        <view><text class="phase-title">{{phase.name}}</text><text class="phase-count">{{phase.done}} / {{phase.total}} 完成</text></view>
+        <text class="phase-arrow">{{phase.open ? '−' : '+'}}</text>
+      </view>
+      <view class="task-list" wx:if="{{phase.open}}">
+        <view class="task-item {{task.status === '已完成' ? 'task-done' : ''}}" wx:for="{{phase.items}}" wx:key="_id" wx:for-item="task" data-id="{{task._id}}" bindtap="toggleItem">
+          <view class="task-check">{{task.status === '已完成' ? '✓' : ''}}</view>
+          <view class="task-main"><text class="task-timeline">{{task.timeline}}</text><text class="task-title">{{task.title}}</text><text class="task-content">{{task.content}}</text></view>
+        </view>
+      </view>
+    </view>
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+    <view class="load-error" wx:if="{{loadError && !loading}}" bindtap="loadItems">清单加载失败，点击重试</view>
+  </view>
+</scroll-view>
